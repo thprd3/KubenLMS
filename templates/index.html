@@ -1,5 +1,3 @@
-<a href="/add">Add New Module</a>
-
 {% extends 'layout.html' %}
 
 {% block content %}
@@ -7,11 +5,14 @@
 <ul>
     {% for module in modules %}
     <li>
-        <a href="/module/{{ module[0] }}">{{ module[1] }}</a> - 
-        {% if module[3] %}Completed{% else %}<form action="/complete/{{ module[0] }}" method="post" style="display:inline;">
-            <button type="submit">Mark Complete</button>
-        </form>{% endif %}
+        {% if module[3] %}
+            <a href="/module/{{ module[0] }}">{{ module[1] }}</a>
+        {% else %}
+            <span>{{ module[1] }} (Locked)</span>
+        {% endif %}
     </li>
     {% endfor %}
 </ul>
+<a href="/add">Add New Module</a>
+<a href="/admin">Admin</a>
 {% endblock %}

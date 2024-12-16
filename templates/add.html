@@ -7,6 +7,12 @@
     <input type="text" id="title" name="title" required><br><br>
     <label for="description">Description:</label><br>
     <textarea id="description" name="description" rows="4" required></textarea><br><br>
+    <label for="required_modules">Required Modules:</label><br>
+    {% for module in modules %}
+        <input type="checkbox" id="module_{{ module[0] }}" name="required_modules" value="{{ module[0] }}">
+        <label for="module_{{ module[0] }}">{{ module[1] }}</label><br>
+    {% endfor %}
+    <br>
     <button type="submit">Add Module</button>
 </form>
 <a href="/">Back to Modules</a>

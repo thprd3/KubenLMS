@@ -1,0 +1,31 @@
+{% extends 'layout.html' %}
+
+{% block content %}
+<h2>Submissions</h2>
+<table>
+    <tr>
+        <th>Submission ID</th>
+        <th>Student ID</th>
+        <th>Student Name</th>
+        <th>Module</th>
+        <th>Status</th>
+        <th>Action</th>
+    </tr>
+    {% for submission in submissions %}
+    <tr>
+        <td>{{ submission[0] }}</td>
+        <td>{{ submission[1] }}</td>
+        <td>{{ submission[2] }}</td>
+        <td>{{ submission[3] }}</td>
+        <td>{{ "Approved" if submission[4] else "Pending" }}</td>
+        <td>
+            {% if not submission[4] %}
+            <form action="/approve/{{ submission[0] }}" method="post">
+                <button type="submit">Approve</button>
+            </form>
+            {% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}
