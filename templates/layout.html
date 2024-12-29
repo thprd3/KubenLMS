@@ -1,18 +1,31 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <title>Module System</title>
+    <title>KubenLMS</title>
     <link rel="stylesheet" type="text/css" href="/static/style.css">
 </head>
+
 <body>
     <header>
-        <h1>Module-Based Learning</h1>
+        <ul id="header-links">
+            <li><a href="/">Moduler</a></li>
+            <li><a href="/admin">Godkjenningskø</a></li>
+            <li><a href="/add">Ny modul</a></li>
+            <li><form action="/reset_db" method="post" style="display: inline;">
+                <button type="submit">DEBUG: reset db</button>
+            </li>
+            </form>
+        </ul>
+        <h1>KubenLMS</h1>
+        <div></div>
     </header>
     <main>
         {% block content %}{% endblock %}
     </main>
     <footer>
-        <p>Simple Module System Prototype</p>
+        <p>KubenLMS - Modulbasert læringsplatform</p>
     </footer>
 </body>
+
 </html>

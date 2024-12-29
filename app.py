@@ -35,12 +35,34 @@ def init_db():
             FOREIGN KEY (required_module_id) REFERENCES modules(id),
             PRIMARY KEY (module_id, required_module_id)
         )''')
+        
+        # Insert dummy data for students
+        cursor.execute('INSERT INTO students (name) VALUES (?)', ('Simen',))
+        cursor.execute('INSERT INTO students (name) VALUES (?)', ('Thale',))
+        cursor.execute('INSERT INTO students (name) VALUES (?)', ('Thomas',))
+
+        # Insert dummy data for modules
+        cursor.execute('INSERT INTO modules (title, description) VALUES (?, ?)', ('Introduction to Python', 'Learn the basics of Python programming.'))
+        cursor.execute('INSERT INTO modules (title, description) VALUES (?, ?)', ('Database Fundamentals', 'Learn SQL and database design.'))
+        cursor.execute('INSERT INTO modules (title, description) VALUES (?, ?)', ('Web Development Basics', 'Build your first website using HTML, CSS, and JavaScript.'))
     conn.close()
 init_db()
 
-# Routes
-@app.route('/')
+@app.route('/reset_db', methods=['POST'])
+def reset_database():
+    with sqlite3.connect('database.db') as conn:
+        cursor = conn.cursor()
+        cursor.execute('DROP TABLE IF EXISTS submissions')
+        cursor.execute('DROP TABLE IF EXISTS module_dependencies')
+        cursor.execute('DROP TABLE IF EXISTS modules')
+        cursor.execute('DROP TABLE IF EXISTS students')
+        conn.commit()
+        init_db()
+    return redirect(url_for('index'))
+
+@app.route('/') # lists all modules
 def index():
+    student_id = 1  # Example: hardcoded student ID for now
     with sqlite3.connect('database.db') as conn:
         cursor = conn.cursor()
         modules = cursor.execute('''
@@ -49,19 +71,24 @@ def index():
                        SELECT 1 FROM module_dependencies md
                        LEFT JOIN submissions s ON md.required_module_id = s.module_id
                        WHERE md.module_id = m.id AND (s.is_approved IS NULL OR s.is_approved = 0)
-                   ) THEN 0 ELSE 1 END AS is_accessible
+                   ) THEN 0 ELSE 1 END AS is_accessible,
+                   CASE WHEN EXISTS (
+                       SELECT 1 FROM submissions s
+                       WHERE s.module_id = m.id AND s.student_id = ? AND s.is_approved = 1
+                   ) THEN 1 ELSE 0 END AS is_completed
             FROM modules m
-        ''').fetchall()
+        ''', (student_id,)).fetchall()
     return render_template('index.html', modules=modules)
 
-@app.route('/module/<int:module_id>')
+@app.route('/module/<int:module_id>') # module page
 def module(module_id):
     with sqlite3.connect('database.db') as conn:
         cursor = conn.cursor()
         module = cursor.execute('SELECT * FROM modules WHERE id = ?', (module_id,)).fetchone()
     return render_template('module.html', module=module)
 
-@app.route('/submit/<int:module_id>', methods=['POST'])
+# student adds finished module into submission queue
+@app.route('/submit/<int:module_id>', methods=['POST']) 
 def submit_module(module_id):
     student_id = 1  # Example: hardcoded student ID for now
     with sqlite3.connect('database.db') as conn:
@@ -77,8 +104,8 @@ def admin():
         submissions = cursor.execute('''
             SELECT s.id, s.student_id, st.name, m.title, s.is_approved
             FROM submissions s
-            JOIN students st ON s.student_id = st.id
-            JOIN modules m ON s.module_id = m.id
+            LEFT JOIN students st ON s.student_id = st.id
+            LEFT JOIN modules m ON s.module_id = m.id
         ''').fetchall()
     return render_template('admin.html', submissions=submissions)
 
@@ -90,7 +117,7 @@ def approve_submission(submission_id):
         conn.commit()
     return redirect(url_for('admin'))
 
-@app.route('/add', methods=['GET', 'POST'])
+@app.route('/add', methods=['GET', 'POST']) # add new module
 def add_module():
     if request.method == 'POST':
         title = request.form['title']

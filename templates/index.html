@@ -1,11 +1,13 @@
 {% extends 'layout.html' %}
 
 {% block content %}
-<h2>Available Modules</h2>
+<h2>Moduler</h2>
 <ul>
     {% for module in modules %}
     <li>
-        {% if module[3] %}
+        {% if module[4] %}
+            <span>{{ module[1] }} (Completed)</span>
+        {% elif module[3] %}
             <a href="/module/{{ module[0] }}">{{ module[1] }}</a>
         {% else %}
             <span>{{ module[1] }} (Locked)</span>
@@ -13,6 +15,4 @@
     </li>
     {% endfor %}
 </ul>
-<a href="/add">Add New Module</a>
-<a href="/admin">Admin</a>
 {% endblock %}

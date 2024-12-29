@@ -8,8 +8,17 @@ header {
     background-color: #333;
     color: #fff;
     padding: 10px;
-    text-align: center;
+    display: flex;
+    justify-content: space-between;
 }
+#header-links a{
+    
+}
+
+a {
+    color: rgb(35, 164, 255);
+}
+
 main {
     padding: 20px;
 }
@@ -26,6 +35,7 @@ button {
     border: none;
     padding: 5px 10px;
     cursor: pointer;
+    font-size: 125%;
 }
 button:disabled {
     background-color: #cccccc;
@@ -37,12 +47,49 @@ button:hover {
 table {
     width: 100%;
     border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 16px;
 }
 th, td {
     border: 1px solid #ddd;
-    padding: 8px;
+    padding: 12px;
     text-align: left;
 }
 th {
-    background-color: #f2f2f2;
+    background-color: #8e8e8e;
+    font-weight: bold;
+}
+tr:nth-child(odd) {
+    background-color: #dddddd;
+}
+tr:hover {
+    background-color: #c4c4c4;
+}
+
+form {
+    margin-bottom: 5vh;
+}
+
+footer {
+    background-color: #c1c1c1;
+    display: flex;
+    justify-content: center;
+}
+
+.block {
+    background-color: #c1c1c1;
+    padding: 1vh;
+}
+
+#title {
+    width: 50vw;
+    height: 8vh;
+    font-size: 2rem;
+}
+
+#description {
+    width: 50vw;
+    height: 4vw;
+    font-size: 1rem;
+
 }
